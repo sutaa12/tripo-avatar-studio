@@ -207,6 +207,31 @@ summary {
 #blinkStatus {
   min-height: 3.4em;
 }
+#bgmName {
+  overflow-wrap: anywhere;
+}
+#bgmChoose {
+  width: 100%;
+}
+#bgmSeek {
+  width: 100%;
+  margin: 0;
+}
+#bgmTime {
+  text-align: right;
+  color: #a498ae;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.bgm-volume input {
+  flex: 1;
+  min-width: 0;
+}
+#bgmVolumeValue {
+  width: 3.5em;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
 .privacy {
   margin-top: 24px;
 }

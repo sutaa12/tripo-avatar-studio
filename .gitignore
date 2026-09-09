@@ -2,4 +2,5 @@ node_modules/
 dist/
 test/*
 !test/*.test.ts
+!test/bgm-browser.mjs
 *.log
