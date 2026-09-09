@@ -119,6 +119,14 @@ try {
     await page.waitForFunction(() => window.__studio.input.screenVideo.readyState >= 2);
     report.backgroundFixture = path.basename(screenFile);
   }
+  if (process.env.CROP_CHECK === '1') {
+    await page.locator('#screenCrop > summary').click();
+    for (const [side, value] of Object.entries({top: 8, bottom: 10, left: 12, right: 5})) {
+      await page.locator(`#crop-${side}`).fill(String(value));
+      await page.locator(`#crop-${side}`).dispatchEvent('input');
+    }
+    report.crop = await page.evaluate(() => JSON.parse(localStorage.getItem('avatar-layout-v1')).screenCrop);
+  }
   await page.locator('details').filter({has: page.locator('#demo')}).locator('summary').click();
   await page.locator('#demo').click();
   let popup = await openOutput();

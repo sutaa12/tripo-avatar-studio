@@ -232,6 +232,35 @@ summary {
   font-size: 13px;
   font-variant-numeric: tabular-nums;
 }
+#screenCrop {
+  border-bottom: 1px solid #38303f;
+  margin-bottom: 14px;
+}
+#cropPreview {
+  display: block;
+  width: 100%;
+  border-radius: 6px;
+  margin: 12px 0;
+}
+#cropPreview[hidden], #cropPreviewHint[hidden] {
+  display: none;
+}
+.crop-margin {
+  display: grid;
+  grid-template-columns: 1.2em minmax(0, 1fr) 4.2em 1em;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #c6bdcf;
+}
+.crop-margin input[type="range"], .crop-margin input[type="number"] {
+  width: 100%;
+  min-width: 0;
+}
+.crop-margin input[type="number"] {
+  font-variant-numeric: tabular-nums;
+}
+#cropReset { width: 100%; }
 .privacy {
   margin-top: 24px;
 }

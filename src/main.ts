@@ -5,6 +5,7 @@ import { contain, moveRect, Rect, clamp } from "./layout";
 import { installBlinkControls } from "./blink-controls";
 import { installBgmControls } from "./bgm";
 import { OutputFrameLoop } from "./output-frame-loop";
+import { installScreenCrop } from "./screen-crop";
 const root = document.querySelector<HTMLDivElement>("#app")!;
 root.innerHTML = `<header><div class="brand">◈ <b>Avatar Studio</b><span>MODEL PREVIEW</span></div><div id="status" role="status">モデルを読み込んでいます…</div></header><main><section class="preview"><div class="toolbar"><span>配信プレビュー <small>1920 × 1080</small></span><button id="clean">出力画面を開く ↗</button></div><div class="canvasWrap"><canvas id="output" width="1920" height="1080" aria-label="配信の合成画面"></canvas><div id="selection"><i></i></div></div><div class="bottom"><span>背景 → 共有画面 → アバター → 文字</span><span id="fps"></span></div><p class="note">映像は端末内で処理します。録画を読み込んで動作を確認できます。</p></section><aside><nav><b>シーンを編集</b><button id="reset">配置を戻す</button></nav><section><h2>入力</h2><div class="buttons"><button id="share">画面を共有</button><button id="camera">カメラを開始</button></div><div class="buttons"><button id="stopShare" disabled>共有を停止</button><button id="stopCamera" disabled>カメラを停止</button></div><label class="file">動作を読み取る録画 <input id="trackingFile" type="file" accept="video/*"></label><label class="file">背景に流す録画 <input id="screenFile" type="file" accept="video/*"></label><div class="buttons"><button id="videoPause">録画を一時停止</button><button id="record">合成を録画</button></div><div id="inputPreview"></div><button id="calibrate">今の姿勢を基準にする</button><p id="trackingStatus"></p><p id="inputStatus">カメラ・共有画面はまだ取得していません。</p></section><section><h2>背景</h2><label>背景色 <input id="background" type="color" value="#eee8f0"></label></section><section><h2>配置</h2><label>編集するもの <select id="layer"><option value="avatar">アバター</option><option value="screen">共有画面</option><option value="text">文字</option></select></label><div id="position"></div><p>ドラッグで移動、右下の点で拡縮できます。配置は自動で保存されます。</p></section><section><h2>文字</h2><label>メッセージ <textarea id="message" rows="2" placeholder="配信タイトルやお知らせ"></textarea></label><label>文字色 <input id="textColor" type="color" value="#422f45"></label><label>文字の大きさ <input id="fontSize" type="range" min="16" max="160" value="52"></label></section><section><h2>アバターの見え方</h2><label>輪郭の太さ <input id="outline" type="range" min=".6" max="3" step=".1" value="1.6"></label><label>髪の光沢 <input id="shine" type="range" min="0" max=".4" step=".01" value=".14"></label><label>上半身を大きく <input id="bust" type="checkbox"></label></section><details><summary>モデルの動作を確認</summary><label>座った姿勢 <input id="seated" type="checkbox" checked></label><button id="demo">大きく動かして確認</button><div id="modelControls"></div><p>手動スライダーで書き出した骨・表情を確認します。全表情の完成版ではありません。</p></details><p class="privacy">映像はこのブラウザ内で処理します。選んだBGMを再生・録画できます。マイク音声の取得・外部への送信は行いません。</p></aside></main>`;
 const $ = <T extends HTMLElement = HTMLElement>(s: string) =>
@@ -47,7 +48,9 @@ let selected = "avatar",
   outputStream: MediaStream | undefined,
   recorder: MediaRecorder | undefined,
   recordingStarting = false;
-const prefIds = ["background", "textColor", "message", "fontSize"];
+const screenCrop = installScreenCrop($("#layer").closest("section")!, save);
+const prefIds = ["background", "textColor", "message", "fontSize", "outline", "shine"];
+const checkedPrefIds = ["bust", "seated"];
 try {
   const saved = JSON.parse(localStorage.getItem("avatar-layout-v1") ?? "null");
   if (saved) {
@@ -64,21 +67,48 @@ try {
     for (const id of prefIds)
       if (typeof saved[id] === "string")
         $<HTMLInputElement>("#" + id).value = saved[id];
+    for (const id of checkedPrefIds)
+      if (typeof saved[id] === "boolean")
+        $<HTMLInputElement>("#" + id).checked = saved[id];
+    if (typeof saved.selectedLayer === "string" && Object.hasOwn(layers, saved.selectedLayer)) {
+      selected = saved.selectedLayer;
+      $<HTMLSelectElement>("#layer").value = selected;
+    }
+    screenCrop.restore(saved.screenCrop);
   }
 } catch {
-  status("保存した配置を読み込めなかったため、初期配置を使います");
+  status("保存した設定を読み込めなかったため、初期設定を使います");
 }
 function save() {
-  const preferences: Record<string, unknown> = { layers };
+  const preferences: Record<string, unknown> = { layers, selectedLayer: selected, screenCrop: screenCrop.value };
   for (const id of prefIds)
     preferences[id] = $<HTMLInputElement>("#" + id).value;
+  for (const id of checkedPrefIds)
+    preferences[id] = $<HTMLInputElement>("#" + id).checked;
   try {
     localStorage.setItem("avatar-layout-v1", JSON.stringify(preferences));
   } catch {
-    status("このブラウザでは配置を保存できません");
+    status("このブラウザでは設定を保存できません");
   }
 }
-for (const id of prefIds) $("#" + id).addEventListener("input", save);
+function applyAppearance() {
+  avatar.toon.profile.outlinePixels = Number($<HTMLInputElement>("#outline").value);
+  avatar.toon.profile.hairHighlight = Number($<HTMLInputElement>("#shine").value);
+  avatar.debug.seated = $<HTMLInputElement>("#seated").checked;
+  const bust = $<HTMLInputElement>("#bust").checked;
+  avatar.camera.position.set(0, bust ? 1.3 : 1.2, bust ? 1.8 : 2.8);
+  avatar.camera.lookAt(0, bust ? 1.22 : 1.04, 0);
+}
+for (const id of [...prefIds, ...checkedPrefIds]) {
+  $("#" + id).addEventListener("input", () => {
+    if (["outline", "shine", ...checkedPrefIds].includes(id)) applyAppearance();
+    save();
+  });
+}
+applyAppearance();
+const appearanceNote = document.createElement("p");
+appearanceNote.textContent = "見え方と姿勢は、このブラウザに自動で保存されます。";
+$("#bust").closest("section")!.append(appearanceNote);
 function selection() {
   const r = layers[selected];
   $("#selection").style.cssText =
@@ -113,6 +143,7 @@ positions();
 $<HTMLSelectElement>("#layer").onchange = (e) => {
   selected = (e.target as HTMLSelectElement).value;
   positions();
+  save();
 };
 $("#reset").onclick = () => {
   Object.assign(layers, structuredClone(defaults));
@@ -175,8 +206,6 @@ for (const [key, title, min, max] of [
   label.append(el);
   $("#modelControls").append(label);
 }
-$<HTMLInputElement>("#seated").onchange = (e) =>
-  (avatar.debug.seated = (e.target as HTMLInputElement).checked);
 $("#share").onclick = async () => {
   try {
     await input.startScreen();
@@ -368,10 +397,12 @@ function frame(now: number) {
   ctx.fillStyle = $<HTMLInputElement>("#background").value;
   ctx.fillRect(0, 0, 1920, 1080);
   const screen = input.screenVideo;
-  if (screen.readyState >= 2) {
-    const r = contain(screen.videoWidth, screen.videoHeight, layers.screen);
-    ctx.drawImage(screen, r.x, r.y, r.width, r.height);
+  if (screen.readyState >= 2 && screen.videoWidth > 0 && screen.videoHeight > 0) {
+    const crop = screenCrop.source(screen.videoWidth, screen.videoHeight);
+    const r = contain(crop.width, crop.height, layers.screen);
+    ctx.drawImage(screen, crop.x, crop.y, crop.width, crop.height, r.x, r.y, r.width, r.height);
   }
+  screenCrop.preview(screen);
   if (avatar.vrm) {
     const r = contain(900, 1080, layers.avatar);
     ctx.drawImage(avatar.renderer.domElement, r.x, r.y, r.width, r.height);
@@ -432,20 +463,6 @@ window.addEventListener("pagehide", () => {
   outputStream?.getTracks().forEach((t) => t.stop());
   outputWindow?.close();
 });
-
-$<HTMLInputElement>("#outline").oninput = (e) =>
-  (avatar.toon.profile.outlinePixels = Number(
-    (e.target as HTMLInputElement).value,
-  ));
-$<HTMLInputElement>("#shine").oninput = (e) =>
-  (avatar.toon.profile.hairHighlight = Number(
-    (e.target as HTMLInputElement).value,
-  ));
-$<HTMLInputElement>("#bust").onchange = (e) => {
-  const bust = (e.target as HTMLInputElement).checked;
-  avatar.camera.position.set(0, bust ? 1.3 : 1.2, bust ? 1.8 : 2.8);
-  avatar.camera.lookAt(0, bust ? 1.22 : 1.04, 0);
-};
 
 $("#calibrate").onclick = () =>
   status(
