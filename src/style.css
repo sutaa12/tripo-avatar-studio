@@ -201,6 +201,12 @@ details {
 summary {
   cursor: pointer;
 }
+#blinkStrength {
+  width: 100%;
+}
+#blinkStatus {
+  min-height: 3.4em;
+}
 .privacy {
   margin-top: 24px;
 }

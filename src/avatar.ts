@@ -4,7 +4,9 @@ import { VRMLoaderPlugin, VRM, VRMHumanBoneName } from "@pixiv/three-vrm";
 import { trackingWeight } from "./layout";
 import { TrackingState, trackingDirection } from "./tracking-state";
 import { ToonStyle } from "./toon";
+import { BlinkCorrection, smoothBlink } from "./blink";
 export class Avatar {
+  blink = new BlinkCorrection();
   toon = new ToonStyle();
   neutralFace = new T.Quaternion();
   neutralBody = new T.Vector3();
@@ -152,6 +154,7 @@ export class Avatar {
     this.packet = p;
     this.received = performance.now();
     this.tracking.ingest(p, this.received);
+    this.blink.observe(p.face, this.received);
   }
   palmFrame(along: T.Vector3, across: T.Vector3) {
     const x = along.clone().normalize();
@@ -270,8 +273,11 @@ export class Avatar {
       const c: Record<string, number> = {};
       for (const x of p.face.faceBlendshapes?.[0]?.categories ?? [])
         c[x.categoryName] = x.score;
-      values.blinkLeft += (c.eyeBlinkLeft ?? 0) * w;
-      values.blinkRight += (c.eyeBlinkRight ?? 0) * w;
+      // Hold the last blink until face tracking expires. A fading pose weight
+      // must not turn a fully closed eye back into a half-open eye between packets.
+      const blinkWeight = w > 0 ? 1 : 0;
+      values.blinkLeft += this.blink.map(c.eyeBlinkLeft ?? 0, "Left") * blinkWeight;
+      values.blinkRight += this.blink.map(c.eyeBlinkRight ?? 0, "Right") * blinkWeight;
       values.jawOpen += (c.jawOpen ?? 0) * w;
       const m = p.face.facialTransformationMatrixes?.[0]?.data;
       if (m) {
@@ -385,7 +391,9 @@ export class Avatar {
       this.previous.set(name, b.quaternion.clone());
     }
     for (const [name, value] of Object.entries(values)) {
-      const smoothed =
+      const smoothed = name.startsWith("blink")
+        ? smoothBlink(this.faceValues[name] ?? 0, value, dt)
+        :
         (this.faceValues[name] ?? 0) +
         (T.MathUtils.clamp(value, 0, 1) - (this.faceValues[name] ?? 0)) * alpha;
       this.faceValues[name] = smoothed;
