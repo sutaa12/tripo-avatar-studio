@@ -1,0 +1,7 @@
+/models/avatar.gltf
+  Cache-Control: no-cache
+/models/version.json
+  Cache-Control: no-cache
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin

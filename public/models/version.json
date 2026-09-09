@@ -1,0 +1,36 @@
+{
+  "sourceSha256": "7c2b419d7dd0fba534dba868d8b55db296e91fc65ac98b44209d8e304924e28e",
+  "images": [
+    {
+      "name": "texture-e4550b9805d982ee.jpg",
+      "bytes": 4671669,
+      "sha256": "e4550b9805d982eec24bedaf94f29e8e001e830833b9b2b7209bab748f951e62"
+    },
+    {
+      "name": "texture-ea68ffb70dddaacd.png",
+      "bytes": 12956384,
+      "sha256": "ea68ffb70dddaacdb0e359095babaf82c3732e8ab9a6e3510074448a5b3f9488"
+    },
+    {
+      "name": "texture-0049fa9ca2388625.jpg",
+      "bytes": 3162558,
+      "sha256": "0049fa9ca238862501951caabc65e7eb0a5b7232859a4b5382a1772c8568b851"
+    },
+    {
+      "name": "texture-1fcabb80c93dcf77.png",
+      "bytes": 745144,
+      "sha256": "1fcabb80c93dcf77b4f055ca30cfcc67f5c498cfcac8037e873e66f569627241"
+    },
+    {
+      "name": "texture-fdd125db9c74e7a1.jpg",
+      "bytes": 2133549,
+      "sha256": "fdd125db9c74e7a15dca288c6284a6e2279b1290bd5059ece2b65fc49eb0cfb9"
+    }
+  ],
+  "geometry": {
+    "name": "geometry-0d6299f44bcc1afc.bin",
+    "bytes": 7740692,
+    "sha256": "0d6299f44bcc1afcbad7666c04cb911e2b3f71ce22a9c2085bbac37cb47583d5"
+  },
+  "conversion": "Lossless separation; all image and vertex bytes retained"
+}
