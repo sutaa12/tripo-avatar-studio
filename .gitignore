@@ -3,4 +3,5 @@ dist/
 test/*
 !test/*.test.ts
 !test/bgm-browser.mjs
+!test/output-browser.mjs
 *.log

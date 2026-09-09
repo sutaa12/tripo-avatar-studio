@@ -4,6 +4,7 @@ import { Inputs } from "./inputs";
 import { contain, moveRect, Rect, clamp } from "./layout";
 import { installBlinkControls } from "./blink-controls";
 import { installBgmControls } from "./bgm";
+import { OutputFrameLoop } from "./output-frame-loop";
 const root = document.querySelector<HTMLDivElement>("#app")!;
 root.innerHTML = `<header><div class="brand">◈ <b>Avatar Studio</b><span>MODEL PREVIEW</span></div><div id="status" role="status">モデルを読み込んでいます…</div></header><main><section class="preview"><div class="toolbar"><span>配信プレビュー <small>1920 × 1080</small></span><button id="clean">出力画面を開く ↗</button></div><div class="canvasWrap"><canvas id="output" width="1920" height="1080" aria-label="配信の合成画面"></canvas><div id="selection"><i></i></div></div><div class="bottom"><span>背景 → 共有画面 → アバター → 文字</span><span id="fps"></span></div><p class="note">映像は端末内で処理します。録画を読み込んで動作を確認できます。</p></section><aside><nav><b>シーンを編集</b><button id="reset">配置を戻す</button></nav><section><h2>入力</h2><div class="buttons"><button id="share">画面を共有</button><button id="camera">カメラを開始</button></div><div class="buttons"><button id="stopShare" disabled>共有を停止</button><button id="stopCamera" disabled>カメラを停止</button></div><label class="file">動作を読み取る録画 <input id="trackingFile" type="file" accept="video/*"></label><label class="file">背景に流す録画 <input id="screenFile" type="file" accept="video/*"></label><div class="buttons"><button id="videoPause">録画を一時停止</button><button id="record">合成を録画</button></div><div id="inputPreview"></div><button id="calibrate">今の姿勢を基準にする</button><p id="trackingStatus"></p><p id="inputStatus">カメラ・共有画面はまだ取得していません。</p></section><section><h2>背景</h2><label>背景色 <input id="background" type="color" value="#eee8f0"></label></section><section><h2>配置</h2><label>編集するもの <select id="layer"><option value="avatar">アバター</option><option value="screen">共有画面</option><option value="text">文字</option></select></label><div id="position"></div><p>ドラッグで移動、右下の点で拡縮できます。配置は自動で保存されます。</p></section><section><h2>文字</h2><label>メッセージ <textarea id="message" rows="2" placeholder="配信タイトルやお知らせ"></textarea></label><label>文字色 <input id="textColor" type="color" value="#422f45"></label><label>文字の大きさ <input id="fontSize" type="range" min="16" max="160" value="52"></label></section><section><h2>アバターの見え方</h2><label>輪郭の太さ <input id="outline" type="range" min=".6" max="3" step=".1" value="1.6"></label><label>髪の光沢 <input id="shine" type="range" min="0" max=".4" step=".01" value=".14"></label><label>上半身を大きく <input id="bust" type="checkbox"></label></section><details><summary>モデルの動作を確認</summary><label>座った姿勢 <input id="seated" type="checkbox" checked></label><button id="demo">大きく動かして確認</button><div id="modelControls"></div><p>手動スライダーで書き出した骨・表情を確認します。全表情の完成版ではありません。</p></details><p class="privacy">映像はこのブラウザ内で処理します。選んだBGMを再生・録画できます。マイク音声の取得・外部への送信は行いません。</p></aside></main>`;
 const $ = <T extends HTMLElement = HTMLElement>(s: string) =>
@@ -238,6 +239,10 @@ $("#videoPause").onclick = () => {
   }
 };
 $("#clean").onclick = () => {
+  if (outputWindow && !outputWindow.closed) {
+    outputWindow.focus();
+    return;
+  }
   outputWindow = window.open(
     "",
     "avatar-output",
@@ -260,7 +265,16 @@ $("#clean").onclick = () => {
   outputStream = canvas.captureStream(30);
   video.srcObject = outputStream;
   outputWindow.document.body.append(video);
-  void video.play();
+  void video.play().catch(() => status("出力画面を閉じて、もう一度開いてください"));
+  frameLoop.setOutput(outputWindow);
+  const activeOutput = outputWindow, activeStream = outputStream;
+  outputWindow.addEventListener("pagehide", () => {
+    activeStream.getTracks().forEach((t) => t.stop());
+    if (outputWindow === activeOutput) {
+      outputStream = undefined;
+      outputWindow = null;
+    }
+  }, { once: true });
 };
 $("#record").onclick = async () => {
   if (recorder?.state === "recording") {
@@ -347,7 +361,6 @@ let last = performance.now(),
   fpsAt = last;
 const metrics = { renderFrames: 0, fps: 0, renderMs: [] as number[] };
 function frame(now: number) {
-  requestAnimationFrame(frame);
   const dt = Math.min((now - last) / 1000, 0.05);
   last = now;
   const t = performance.now();
@@ -404,7 +417,8 @@ void avatar
     status("モデルを読み込めませんでした");
     console.error(e);
   });
-requestAnimationFrame(frame);
+const frameLoop = new OutputFrameLoop(window, frame);
+frameLoop.start();
 window.addEventListener("beforeunload", (event) => {
   if (recorder || recordingStarting) {
     event.preventDefault();
@@ -412,6 +426,7 @@ window.addEventListener("beforeunload", (event) => {
   }
 });
 window.addEventListener("pagehide", () => {
+  frameLoop.stop();
   input.dispose();
   bgm.dispose();
   outputStream?.getTracks().forEach((t) => t.stop());
