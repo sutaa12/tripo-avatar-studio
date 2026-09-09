@@ -1,15 +1,20 @@
 {
-  "sourceSha256": "a7972965603ede34935c70b7c4d369acdb4d1c0000bd49a967685fc4caa94193",
+  "sourceSha256": "fa00d05ac32663f2780e12e2fdadc383aef922f291550130ee9d748a0b7b3ce5",
   "images": [
     {
-      "name": "texture-e4550b9805d982ee.jpg",
-      "bytes": 4671669,
-      "sha256": "e4550b9805d982eec24bedaf94f29e8e001e830833b9b2b7209bab748f951e62"
+      "name": "texture-1fc84510e03f0e24.png",
+      "bytes": 15373104,
+      "sha256": "1fc84510e03f0e2454fb8ff9870a926e4d5d50cfa88e792c22c87fb86416922b"
     },
     {
-      "name": "texture-ea68ffb70dddaacd.png",
-      "bytes": 12956384,
-      "sha256": "ea68ffb70dddaacdb0e359095babaf82c3732e8ab9a6e3510074448a5b3f9488"
+      "name": "texture-91b0c75da0a97d99.png",
+      "bytes": 609161,
+      "sha256": "91b0c75da0a97d99000667dc70101bfbc0542dae4db9a58ec3ade87db26caa84"
+    },
+    {
+      "name": "texture-08a3fd564b66db3e.png",
+      "bytes": 609006,
+      "sha256": "08a3fd564b66db3e349779e8160e66c98e457a0df734ba5a2afe11e47618cff6"
     },
     {
       "name": "texture-0049fa9ca2388625.jpg",
@@ -17,9 +22,19 @@
       "sha256": "0049fa9ca238862501951caabc65e7eb0a5b7232859a4b5382a1772c8568b851"
     },
     {
-      "name": "texture-0c39d354cef791b6.png",
-      "bytes": 761891,
-      "sha256": "0c39d354cef791b6ea65a51d4ef0cd2cc36fd13d584fb9fd8d45f24d3f5ec04a"
+      "name": "texture-02e74c864125dd55.png",
+      "bytes": 645771,
+      "sha256": "02e74c864125dd55d303a7aa3a36b2cda7822c0b345ff99e167871f3c15d1b06"
+    },
+    {
+      "name": "texture-ea68ffb70dddaacd.png",
+      "bytes": 12956384,
+      "sha256": "ea68ffb70dddaacdb0e359095babaf82c3732e8ab9a6e3510074448a5b3f9488"
+    },
+    {
+      "name": "texture-1a93cdeb8b9b3798.png",
+      "bytes": 89119,
+      "sha256": "1a93cdeb8b9b379868c34e55617fb800fec9f3b1b72e2217ac3278125854ec27"
     },
     {
       "name": "texture-fdd125db9c74e7a1.jpg",
@@ -28,9 +43,9 @@
     }
   ],
   "geometry": {
-    "name": "geometry-a425f850285f73f0.bin",
-    "bytes": 7806760,
-    "sha256": "a425f850285f73f005f8ff10f7dd378dda27e9e6d6974a58ee468948b2e2ae63"
+    "name": "geometry-c8cd74396c66e616.bin",
+    "bytes": 7980232,
+    "sha256": "c8cd74396c66e616db475601c47a3fee4808006d736a0910e6990e308acfd122"
   },
   "conversion": "Lossless separation; all image and vertex bytes retained"
 }

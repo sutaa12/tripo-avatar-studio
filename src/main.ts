@@ -152,6 +152,7 @@ for (const [key, title, min, max] of [
   ["blinkLeft", "左のまばたき", 0, 1],
   ["blinkRight", "右のまばたき", 0, 1],
   ["jawOpen", "口を開く", 0, 1],
+  ["mouthNarrow", "口をすぼめる", 0, 1],
   ["arm", "腕を上げる", 0, 1.4],
   ["fingers", "指を曲げる", 0, 1],
   ["turn", "顔の向き", -0.7, 0.7],

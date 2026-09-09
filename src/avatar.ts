@@ -4,7 +4,8 @@ import { VRMLoaderPlugin, VRM, VRMHumanBoneName } from "@pixiv/three-vrm";
 import { trackingWeight } from "./layout";
 import { TrackingState, trackingDirection } from "./tracking-state";
 import { ToonStyle } from "./toon";
-import { BlinkCorrection, smoothBlink } from "./blink";
+import { BlinkCorrection, smoothBlink, lashArcWeight } from "./blink";
+import { mouthTargets } from "./mouth";
 export class Avatar {
   blink = new BlinkCorrection();
   toon = new ToonStyle();
@@ -22,6 +23,7 @@ export class Avatar {
     blinkLeft: 0,
     blinkRight: 0,
     jawOpen: 0,
+    mouthNarrow: 0,
     arm: 0,
     fingers: 0,
     turn: 0,
@@ -268,6 +270,7 @@ export class Avatar {
       blinkLeft: demo ? Math.pow(Math.max(0, Math.cos(time * Math.PI / 2)), 16) : this.debug.blinkLeft,
       blinkRight: demo ? Math.pow(Math.max(0, Math.cos(time * Math.PI / 2)), 16) : this.debug.blinkRight,
       jawOpen: demo ? .08 + .82 * Math.pow(.5 + .5 * Math.sin(time * 3.6), 2) : this.debug.jawOpen,
+      mouthNarrow: demo ? .85 * Math.pow(Math.max(0, Math.sin(time * 1.8)), 2) : this.debug.mouthNarrow,
     };
     if (true) {
       const c: Record<string, number> = {};
@@ -278,7 +281,9 @@ export class Avatar {
       const blinkWeight = w > 0 ? 1 : 0;
       values.blinkLeft += this.blink.map(c.eyeBlinkLeft ?? 0, "Left") * blinkWeight;
       values.blinkRight += this.blink.map(c.eyeBlinkRight ?? 0, "Right") * blinkWeight;
-      values.jawOpen += (c.jawOpen ?? 0) * w;
+      const mouth = mouthTargets(c);
+      values.jawOpen += mouth.jawOpen * w;
+      values.mouthNarrow += mouth.mouthNarrow * w;
       const m = p.face.facialTransformationMatrixes?.[0]?.data;
       if (m) {
         const mat = new T.Matrix4().fromArray(m);
@@ -398,6 +403,11 @@ export class Avatar {
         (T.MathUtils.clamp(value, 0, 1) - (this.faceValues[name] ?? 0)) * alpha;
       this.faceValues[name] = smoothed;
       v.expressionManager?.setValue("track_" + name, smoothed);
+      if (name === "blinkLeft" || name === "blinkRight") {
+        const expression = "correct_lash" + name.slice(5);
+        if (v.expressionManager?.getExpression(expression))
+          v.expressionManager.setValue(expression, lashArcWeight(smoothed));
+      }
     }
     v.update(dt);
     this.toon.update(

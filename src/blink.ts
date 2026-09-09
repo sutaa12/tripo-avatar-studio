@@ -13,6 +13,10 @@ type Capture = {
 };
 const sides: EyeSide[] = ["Left", "Right"];
 const unit = (n: number) => Number.isFinite(n) ? Math.max(0, Math.min(1, n)) : 0;
+export function lashArcWeight(blink: number) {
+  const b = unit(blink);
+  return 4 * b * (1 - b);
+}
 export const defaultBlinkProfile = (): BlinkProfile => ({
   open: { Left: .04, Right: .04 },
   closed: { Left: .5, Right: .5 },
