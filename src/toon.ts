@@ -35,8 +35,10 @@ export class ToonStyle {
         if (!(original as MToonMaterial).isMToonMaterial) return original;
         const mat = original.clone() as MToonMaterial;
         if (mat.isOutline) { mat.visible = false; return mat; }
+        // A multi-material glTF mesh puts its primitives under the named head node.
+        const headSurface = mesh.name.startsWith("Head_") || mesh.parent?.name === "Head_Face_Loops";
         const role = mesh.name.startsWith("Hair") ? 2
-          : mesh.name.startsWith("Head_") && !mesh.name.includes("Choker") && mat.name !== "Eyelash" ? 1
+          : headSurface && !mesh.name.includes("Choker") && mat.name !== "Eyelash" ? 1
           : mat.name === "Garment_Clean_Color" || mesh.name.includes("Choker") ? 3
           : mat.name === "Hand_Skin" ? 4 : 0;
         mat.userData.role = role;
@@ -47,7 +49,7 @@ export class ToonStyle {
         mat.giEqualizationFactor = .9;
         if (mat.map) mat.map.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
         const prior = mat.onBeforeCompile.bind(mat), cache = mat.customProgramCacheKey.bind(mat);
-        mat.customProgramCacheKey = () => cache()+":avatar-toon-v3:"+role;
+        mat.customProgramCacheKey = () => cache()+":avatar-toon-v4:"+role;
         mat.onBeforeCompile = (shader) => {
           prior(shader, renderer);
           Object.assign(shader.uniforms, {avatarLight:this.light, avatarFaceLight:this.faceLight,
@@ -75,7 +77,11 @@ uniform float avatarRole;
 material.shadeColor = material.diffuseColor * mix(vec3(1.0),shadeColorFactor,avatarStyle.z);`)
             .replaceAll("float dotNL = clamp( dot( geometryNormal, directLight.direction ), -1.0, 1.0 );", `
 float dotNL = clamp(dot(geometryNormal,directLight.direction),-1.0,1.0);
-if (avatarRole == 1.0) dotNL = mix(dotNL,dot(avatarFaceForward,directLight.direction),0.65);`)
+// Head-facing light keeps separately retopologized facial patches continuous.
+// The smooth positional side shadow below supplies the broad face shading.
+if (avatarRole == 1.0) dotNL = dot(avatarFaceForward,directLight.direction);`)
+            .replace("getHemisphereLightIrradiance( hemisphereLights[ i ], geometryNormal )",
+              "getHemisphereLightIrradiance( hemisphereLights[ i ], avatarRole == 1.0 ? avatarFaceForward : geometryNormal )")
             .replace("shading = linearstep( -1.0 + shadingToonyFactor, 1.0 - shadingToonyFactor, shading );", `
 float softness = max(1.0-shadingToonyFactor,fwidth(shading)*1.5);
 shading = smoothstep(-softness,softness,shading);`)

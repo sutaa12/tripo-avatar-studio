@@ -1,5 +1,5 @@
 {
-  "sourceSha256": "a6ec6bf5508286b5889434c30e78c6a5a7067ce46c19356f2ad0e0c6ab91adcb",
+  "sourceSha256": "5167e2f97b107dfdc8dda2b7e9add24a9392c506f39be0411a6c1a3e7fa5aab0",
   "images": [
     {
       "name": "texture-1fc84510e03f0e24.png",
@@ -22,9 +22,9 @@
       "sha256": "0049fa9ca238862501951caabc65e7eb0a5b7232859a4b5382a1772c8568b851"
     },
     {
-      "name": "texture-e7ccd89a8b5976db.png",
-      "bytes": 445606,
-      "sha256": "e7ccd89a8b5976dbb2d17b2409c34ae392aa9ca1264a61c83a2a147e30040b92"
+      "name": "texture-d55146c8790aaef6.png",
+      "bytes": 380751,
+      "sha256": "d55146c8790aaef60d58d27cd1ffdbd750d899bc1afa575a3441dde09638efdf"
     },
     {
       "name": "texture-ea68ffb70dddaacd.png",
@@ -32,9 +32,14 @@
       "sha256": "ea68ffb70dddaacdb0e359095babaf82c3732e8ab9a6e3510074448a5b3f9488"
     },
     {
-      "name": "texture-1a93cdeb8b9b3798.png",
-      "bytes": 89119,
-      "sha256": "1a93cdeb8b9b379868c34e55617fb800fec9f3b1b72e2217ac3278125854ec27"
+      "name": "texture-b7a5f568589733e4.png",
+      "bytes": 46804,
+      "sha256": "b7a5f568589733e432f5880efc19c2f3c2e6016864130ee693b2b77fdcc55819"
+    },
+    {
+      "name": "texture-944d597288ad212d.png",
+      "bytes": 7650582,
+      "sha256": "944d597288ad212daa19c72aae6f6b319cf241429c5f754cdec4536498090296"
     },
     {
       "name": "texture-fdd125db9c74e7a1.jpg",

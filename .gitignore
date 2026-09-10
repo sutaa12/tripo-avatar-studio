@@ -8,4 +8,5 @@ test/*
 !test/toon-hair-browser.mjs
 !test/toon-hair-recording.mjs
 !test/face-clothing-browser.mjs
+!test/blush-review.mjs
 *.log
