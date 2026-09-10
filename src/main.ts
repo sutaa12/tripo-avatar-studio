@@ -49,7 +49,21 @@ let selected = "avatar",
   recorder: MediaRecorder | undefined,
   recordingStarting = false;
 const screenCrop = installScreenCrop($("#layer").closest("section")!, save);
-const prefIds = ["background", "textColor", "message", "fontSize", "outline", "shine"];
+const appearanceControls = [
+  ["shadow", "影の濃さ", "0", "1", ".65"],
+  ["rim", "縁の光", "0", ".6", ".22"],
+  ["hairSway", "髪の揺れ", "0", "1.5", ".65"],
+];
+for (const [id, title, min, max, value] of appearanceControls) {
+  const label = document.createElement("label");
+  label.textContent = title;
+  const range = document.createElement("input");
+  Object.assign(range, {id, type:"range", min, max, step:".01", value});
+  if (id === "hairSway") range.title = "0で揺れを止めます";
+  label.append(range);
+  $("#bust").closest("label")!.before(label);
+}
+const prefIds = ["background", "textColor", "message", "fontSize", "outline", "shine", "shadow", "rim", "hairSway"];
 const checkedPrefIds = ["bust", "seated"];
 try {
   const saved = JSON.parse(localStorage.getItem("avatar-layout-v1") ?? "null");
@@ -94,6 +108,9 @@ function save() {
 function applyAppearance() {
   avatar.toon.profile.outlinePixels = Number($<HTMLInputElement>("#outline").value);
   avatar.toon.profile.hairHighlight = Number($<HTMLInputElement>("#shine").value);
+  avatar.toon.profile.shadowStrength = Number($<HTMLInputElement>("#shadow").value);
+  avatar.toon.profile.rimStrength = Number($<HTMLInputElement>("#rim").value);
+  avatar.hair.strength = Number($<HTMLInputElement>("#hairSway").value);
   avatar.debug.seated = $<HTMLInputElement>("#seated").checked;
   const bust = $<HTMLInputElement>("#bust").checked;
   avatar.camera.position.set(0, bust ? 1.3 : 1.2, bust ? 1.8 : 2.8);
@@ -101,7 +118,7 @@ function applyAppearance() {
 }
 for (const id of [...prefIds, ...checkedPrefIds]) {
   $("#" + id).addEventListener("input", () => {
-    if (["outline", "shine", ...checkedPrefIds].includes(id)) applyAppearance();
+    if (["outline", "shine", "shadow", "rim", "hairSway", ...checkedPrefIds].includes(id)) applyAppearance();
     save();
   });
 }
@@ -393,6 +410,7 @@ function frame(now: number) {
   const dt = Math.min((now - last) / 1000, 0.05);
   last = now;
   const t = performance.now();
+  avatar.toon.outputScale = contain(900, 1080, layers.avatar).height / 1080;
   avatar.update(dt);
   ctx.fillStyle = $<HTMLInputElement>("#background").value;
   ctx.fillRect(0, 0, 1920, 1080);

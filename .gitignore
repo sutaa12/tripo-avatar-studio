@@ -5,4 +5,6 @@ test/*
 !test/bgm-browser.mjs
 !test/output-browser.mjs
 !test/settings-crop-browser.mjs
+!test/toon-hair-browser.mjs
+!test/toon-hair-recording.mjs
 *.log

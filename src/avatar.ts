@@ -6,9 +6,11 @@ import { TrackingState, trackingDirection } from "./tracking-state";
 import { ToonStyle } from "./toon";
 import { BlinkCorrection, smoothBlink, lashArcWeight } from "./blink";
 import { mouthTargets } from "./mouth";
+import { HairMotion } from "./hair-motion";
 export class Avatar {
   blink = new BlinkCorrection();
   toon = new ToonStyle();
+  hair = new HairMotion();
   neutralFace = new T.Quaternion();
   neutralBody = new T.Vector3();
   renderer = new T.WebGLRenderer({
@@ -54,9 +56,9 @@ export class Avatar {
     this.camera.position.set(0, 1.2, 2.8);
     this.camera.lookAt(0, 1.04, 0);
     this.camera.updateProjectionMatrix();
-    this.scene.add(new T.HemisphereLight(0xffffff, 0xd7bfd4, 2));
-    const l = new T.DirectionalLight(0xfff6ee, 2);
-    l.position.set(-1, 2, 3);
+    this.scene.add(new T.HemisphereLight(0xffffff, 0xe1cad8, 1.3));
+    const l = new T.DirectionalLight(0xfff6ee, 1.7);
+    l.position.set(-0.9, 2.1, 3);
     this.scene.add(l);
   }
   async load() {
@@ -65,6 +67,7 @@ export class Avatar {
     const g = await loader.loadAsync(new URL("models/avatar.gltf", document.baseURI).href);
     this.vrm = g.userData.vrm;
     this.scene.add(this.vrm!.scene);
+    this.hair.apply(this.vrm!);
     this.toon.apply(this.vrm!.scene, this.renderer);
     if (this.vrm!.lookAt) this.vrm!.lookAt.autoUpdate = false;
     for (const side of ["left", "right"]) {
@@ -410,10 +413,11 @@ export class Avatar {
       }
     }
     v.update(dt);
+    this.hair.update(dt);
     this.toon.update(
       v.humanoid.getRawBoneNode("head") ?? undefined,
       this.camera,
     );
-    this.renderer.render(this.scene, this.camera);
+    this.toon.render(this.renderer, this.scene, this.camera);
   }
 }
