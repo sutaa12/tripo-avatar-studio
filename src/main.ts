@@ -3,6 +3,7 @@ import { Avatar } from "./avatar";
 import { Inputs } from "./inputs";
 import { contain, moveRect, Rect, clamp } from "./layout";
 import { installBlinkControls } from "./blink-controls";
+import { installMouthControls } from "./mouth-controls";
 import { installBgmControls } from "./bgm";
 import { OutputFrameLoop } from "./output-frame-loop";
 import { installScreenCrop } from "./screen-crop";
@@ -15,6 +16,7 @@ const canvas = $<HTMLCanvasElement>("#output"),
 const status = (s: string) => ($("#status").textContent = s);
 const avatar = new Avatar();
 installBlinkControls(avatar, $("#calibrate"));
+installMouthControls(avatar, $("#blinkSettings"));
 const bgm = installBgmControls($("#calibrate").closest("section")!);
 const defaults: Record<string, Rect> = {
   screen: { x: 60, y: 65, width: 1360, height: 765 },
@@ -51,6 +53,7 @@ let selected = "avatar",
 const screenCrop = installScreenCrop($("#layer").closest("section")!, save);
 const appearanceControls = [
   ["shadow", "影の濃さ", "0", "1", ".65"],
+  ["clothingShadow", "服の影の濃さ", "0", "1", ".6"],
   ["rim", "縁の光", "0", ".6", ".22"],
   ["hairSway", "髪の揺れ", "0", "1.5", ".65"],
 ];
@@ -63,7 +66,7 @@ for (const [id, title, min, max, value] of appearanceControls) {
   label.append(range);
   $("#bust").closest("label")!.before(label);
 }
-const prefIds = ["background", "textColor", "message", "fontSize", "outline", "shine", "shadow", "rim", "hairSway"];
+const prefIds = ["background", "textColor", "message", "fontSize", "outline", "shine", "shadow", "clothingShadow", "rim", "hairSway"];
 const checkedPrefIds = ["bust", "seated"];
 try {
   const saved = JSON.parse(localStorage.getItem("avatar-layout-v1") ?? "null");
@@ -109,6 +112,7 @@ function applyAppearance() {
   avatar.toon.profile.outlinePixels = Number($<HTMLInputElement>("#outline").value);
   avatar.toon.profile.hairHighlight = Number($<HTMLInputElement>("#shine").value);
   avatar.toon.profile.shadowStrength = Number($<HTMLInputElement>("#shadow").value);
+  avatar.toon.profile.clothingShadow = Number($<HTMLInputElement>("#clothingShadow").value);
   avatar.toon.profile.rimStrength = Number($<HTMLInputElement>("#rim").value);
   avatar.hair.strength = Number($<HTMLInputElement>("#hairSway").value);
   avatar.debug.seated = $<HTMLInputElement>("#seated").checked;
@@ -118,7 +122,7 @@ function applyAppearance() {
 }
 for (const id of [...prefIds, ...checkedPrefIds]) {
   $("#" + id).addEventListener("input", () => {
-    if (["outline", "shine", "shadow", "rim", "hairSway", ...checkedPrefIds].includes(id)) applyAppearance();
+    if (["outline", "shine", "shadow", "clothingShadow", "rim", "hairSway", ...checkedPrefIds].includes(id)) applyAppearance();
     save();
   });
 }

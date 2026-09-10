@@ -19,7 +19,7 @@ function prepareFlow(g: T.BufferGeometry) {
 export class ToonStyle {
   readonly outline = new ToonOutline();
   profile = { enabled: true, outlinePixels: 1.6, hairHighlight: .14, faceShadow: .12,
-    shadowStrength: .65, rimStrength: .22 };
+    shadowStrength: .65, clothingShadow: .6, rimStrength: .22 };
   outputScale = 1;
   private light = { value: new T.Vector3() };
   private faceLight = { value: new T.Vector3() };
@@ -47,7 +47,7 @@ export class ToonStyle {
         mat.giEqualizationFactor = .9;
         if (mat.map) mat.map.anisotropy = Math.min(8, renderer.capabilities.getMaxAnisotropy());
         const prior = mat.onBeforeCompile.bind(mat), cache = mat.customProgramCacheKey.bind(mat);
-        mat.customProgramCacheKey = () => cache()+":avatar-toon-v2:"+role;
+        mat.customProgramCacheKey = () => cache()+":avatar-toon-v3:"+role;
         mat.onBeforeCompile = (shader) => {
           prior(shader, renderer);
           Object.assign(shader.uniforms, {avatarLight:this.light, avatarFaceLight:this.faceLight,
@@ -108,6 +108,15 @@ if (avatarRole == 2.0 || avatarRole == 3.0) {
   float deepShade = 1.0-smoothstep(-0.65,-0.2,ndl);
   col *= mix(vec3(1.0),vec3(0.91,0.86,0.93),deepShade*avatarStyle.z);
 }
+if (avatarRole == 3.0) {
+  // The body atlas also contains exposed skin. Its warm yellow undertone
+  // excludes it from the extra violet cloth shadow, including chest and legs.
+  float skinMask = smoothstep(0.012,0.065,diffuseColor.g-diffuseColor.b)
+    * smoothstep(0.15,0.40,diffuseColor.r);
+  float shadeEdge = max(fwidth(ndl)*2.0,0.12);
+  float clothShade = 1.0-smoothstep(0.22-shadeEdge,0.22+shadeEdge,ndl);
+  col *= mix(vec3(1.0),vec3(0.60,0.41,0.57),clothShade*avatarStyle.w*(1.0-skinMask));
+}
 #endif`);
         };
         return mat;
@@ -122,7 +131,7 @@ if (avatarRole == 2.0 || avatarRole == 3.0) {
     this.light.value.set(-.3,.7,1).normalize().transformDirection(camera.matrixWorldInverse);
     this.faceLight.value.set(-.3,.7,1).normalize().applyQuaternion(this.headRotation.invert());
     const p = this.profile;
-    this.style.value.set(p.enabled ? p.hairHighlight : 0,p.enabled ? p.rimStrength : 0,p.shadowStrength,0);
+    this.style.value.set(p.enabled ? p.hairHighlight : 0,p.enabled ? p.rimStrength : 0,p.shadowStrength,p.clothingShadow);
 
   }
   render(renderer: T.WebGLRenderer, scene: T.Scene, camera: T.PerspectiveCamera) {

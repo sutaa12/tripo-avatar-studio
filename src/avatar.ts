@@ -5,10 +5,11 @@ import { trackingWeight } from "./layout";
 import { TrackingState, trackingDirection } from "./tracking-state";
 import { ToonStyle } from "./toon";
 import { BlinkCorrection, smoothBlink, lashArcWeight } from "./blink";
-import { mouthTargets } from "./mouth";
+import { MouthCorrection, smoothMouth } from "./mouth";
 import { HairMotion } from "./hair-motion";
 export class Avatar {
   blink = new BlinkCorrection();
+  mouth = new MouthCorrection();
   toon = new ToonStyle();
   hair = new HairMotion();
   neutralFace = new T.Quaternion();
@@ -160,6 +161,7 @@ export class Avatar {
     this.received = performance.now();
     this.tracking.ingest(p, this.received);
     this.blink.observe(p.face, this.received);
+    this.mouth.observe(p.face, this.received);
   }
   palmFrame(along: T.Vector3, across: T.Vector3) {
     const x = along.clone().normalize();
@@ -284,7 +286,7 @@ export class Avatar {
       const blinkWeight = w > 0 ? 1 : 0;
       values.blinkLeft += this.blink.map(c.eyeBlinkLeft ?? 0, "Left") * blinkWeight;
       values.blinkRight += this.blink.map(c.eyeBlinkRight ?? 0, "Right") * blinkWeight;
-      const mouth = mouthTargets(c);
+      const mouth = this.mouth.map(c);
       values.jawOpen += mouth.jawOpen * w;
       values.mouthNarrow += mouth.mouthNarrow * w;
       const m = p.face.facialTransformationMatrixes?.[0]?.data;
@@ -302,14 +304,17 @@ export class Avatar {
         );
       }
       for (const side of ["Left", "Right"]) {
+        // Hide gaze rotation under a closing lid so the oval imported eyeball
+        // cannot rotate through the fitted closed surface.
+        const gaze = 1 - T.MathUtils.smoothstep(this.faceValues["blink" + side] ?? 0, .25, .85);
         const horizontal =
           (c["eyeLookOut" + side] ?? 0) - (c["eyeLookIn" + side] ?? 0);
         const vertical =
           (c["eyeLookDown" + side] ?? 0) - (c["eyeLookUp" + side] ?? 0);
         this.rot(
           side.toLowerCase() + "Eye",
-          demo ? .16 * Math.sin(time * 1.5) : vertical * 0.3 * w,
-          demo ? .20 * Math.sin(time * 1.2) : horizontal * (side === "Left" ? 1 : -1) * 0.3 * w,
+          (demo ? .16 * Math.sin(time * 1.5) : vertical * 0.3 * w) * gaze,
+          (demo ? .20 * Math.sin(time * 1.2) : horizontal * (side === "Left" ? 1 : -1) * 0.3 * w) * gaze,
         );
       }
       const ps = p.pose.worldLandmarks?.[0];
@@ -401,6 +406,7 @@ export class Avatar {
     for (const [name, value] of Object.entries(values)) {
       const smoothed = name.startsWith("blink")
         ? smoothBlink(this.faceValues[name] ?? 0, value, dt)
+        : name === "jawOpen" ? smoothMouth(this.faceValues[name] ?? 0, value, dt)
         :
         (this.faceValues[name] ?? 0) +
         (T.MathUtils.clamp(value, 0, 1) - (this.faceValues[name] ?? 0)) * alpha;

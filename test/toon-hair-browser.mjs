@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 const dir=`../evidence/${process.env.PREFIX??'toon-hair-spike'}`;fs.mkdirSync(dir,{recursive:true});
 const b=await chromium.launch({headless:true,executablePath:'/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',args:['--enable-gpu','--use-angle=metal']});
 const p=await b.newPage({viewport:{width:1440,height:1000}}), errors=[];
+if(process.env.MODEL) await p.route('**/models/avatar.gltf',r=>r.fulfill({path:process.env.MODEL,contentType:'model/gltf-binary'}));
 if(process.env.FALLBACK==='1') await p.addInitScript(()=>{
  const original=WebGL2RenderingContext.prototype.getExtension;
  WebGL2RenderingContext.prototype.getExtension=function(name){return name==='EXT_color_buffer_float'?null:original.call(this,name)};

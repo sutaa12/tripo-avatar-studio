@@ -7,4 +7,5 @@ test/*
 !test/settings-crop-browser.mjs
 !test/toon-hair-browser.mjs
 !test/toon-hair-recording.mjs
+!test/face-clothing-browser.mjs
 *.log
