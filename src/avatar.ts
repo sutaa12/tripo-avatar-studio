@@ -71,7 +71,12 @@ export class Avatar {
     this.scene.add(this.vrm!.scene);
     this.hair.apply(this.vrm!);
     this.toon.apply(this.vrm!.scene, this.renderer);
-    repairEyeSurfaces(this.vrm!.scene);
+    const eyeReference = await new T.TextureLoader().loadAsync(
+      new URL("eyes/source-eye-projection.png", document.baseURI).href,
+    );
+    eyeReference.flipY = false;
+    eyeReference.colorSpace = T.SRGBColorSpace;
+    repairEyeSurfaces(this.vrm!.scene, eyeReference);
     if (this.vrm!.lookAt) this.vrm!.lookAt.autoUpdate = false;
     for (const side of ["left", "right"]) {
       for (const [part, child] of [

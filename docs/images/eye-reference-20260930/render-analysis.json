@@ -1,0 +1,70 @@
+{
+  "profile": "source-uv-v2",
+  "shaderRevision": "bedcfe3a",
+  "states": [
+    "open",
+    "quarter",
+    "half",
+    "almost",
+    "closed",
+    "winkLeft",
+    "winkRight",
+    "left",
+    "right",
+    "halfLeft",
+    "halfRight",
+    "gazeLeft",
+    "gazeRight",
+    "gazeUp",
+    "gazeDown",
+    "halfGaze",
+    "closedLeft",
+    "closedRight"
+  ],
+  "closedEyeHideComparisons": [
+    {
+      "state": "closed",
+      "differentPixels": 0,
+      "maxChannelDifference": 0
+    },
+    {
+      "state": "closedLeft",
+      "differentPixels": 0,
+      "maxChannelDifference": 0
+    },
+    {
+      "state": "closedRight",
+      "differentPixels": 0,
+      "maxChannelDifference": 0
+    }
+  ],
+  "tests": {
+    "pass": 22,
+    "fail": 0
+  },
+  "nativeShaderErrorsAfterFix": [],
+  "referenceImageSHA256": "35b73e9d082e84ea123b0315540641a1a6ad368d799de5232454c64203aa4882",
+  "irisSourceWidthPixels": 327.272727272727,
+  "irisSourceCenterX": 0.12817388772964478,
+  "irisUVScale": 1,
+  "irisUVOffset": [
+    0,
+    0
+  ],
+  "geometryAndUVRetained": true,
+  "sourceReflectionBounds": {
+    "Left": [
+      2475,
+      1874,
+      2568,
+      2015
+    ],
+    "Right": [
+      1569,
+      1869,
+      1632,
+      2011
+    ]
+  },
+  "scope": "Controlled synthetic face state and gaze inputs. No real webcam acceptance."
+}
