@@ -1,0 +1,46 @@
+{
+  "closedEyeHideComparison": [
+    {
+      "case": "closed",
+      "nonzeroPixels": 0,
+      "maxChannelDifference": 0,
+      "hairStrength": 0
+    },
+    {
+      "case": "closedLeft",
+      "nonzeroPixels": 0,
+      "maxChannelDifference": 0,
+      "hairStrength": 0
+    },
+    {
+      "case": "closedRight",
+      "nonzeroPixels": 0,
+      "maxChannelDifference": 0,
+      "hairStrength": 0
+    }
+  ],
+  "cases": [
+    "open",
+    "half",
+    "closed",
+    "winkLeft",
+    "winkRight",
+    "left",
+    "right",
+    "halfLeft",
+    "halfRight",
+    "gazeLeft",
+    "gazeRight",
+    "gazeUp",
+    "gazeDown",
+    "halfGaze",
+    "quarter",
+    "almost",
+    "closedLeft",
+    "closedRight"
+  ],
+  "nativeBrowserErrors": [],
+  "captureCount": 22,
+  "vrmSHA256": "5167e2f97b107dfdc8dda2b7e9add24a9392c506f39be0411a6c1a3e7fa5aab0",
+  "scope": "Native browser synthetic state and category input. No human camera acceptance."
+}

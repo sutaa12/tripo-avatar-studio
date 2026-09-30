@@ -7,6 +7,7 @@ import { ToonStyle } from "./toon";
 import { BlinkCorrection, smoothBlink, lashArcWeight } from "./blink";
 import { MouthCorrection, smoothMouth } from "./mouth";
 import { HairMotion } from "./hair-motion";
+import { repairEyeSurfaces } from "./eye-surface";
 export class Avatar {
   blink = new BlinkCorrection();
   mouth = new MouthCorrection();
@@ -70,6 +71,7 @@ export class Avatar {
     this.scene.add(this.vrm!.scene);
     this.hair.apply(this.vrm!);
     this.toon.apply(this.vrm!.scene, this.renderer);
+    repairEyeSurfaces(this.vrm!.scene);
     if (this.vrm!.lookAt) this.vrm!.lookAt.autoUpdate = false;
     for (const side of ["left", "right"]) {
       for (const [part, child] of [
