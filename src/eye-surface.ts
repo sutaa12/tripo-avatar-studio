@@ -85,7 +85,8 @@ vec3 repairReferenceEye(vec2 uv, vec3 original) {
   float skin = smoothstep(0.014,0.045,original.g-original.b)
     * smoothstep(0.15,0.40,original.r);
   vec3 lid = texture2D(eyeSkin,uv).rgb;
-  if (dot(lid,vec3(1.0))<0.12) lid=texture2D(eyeSkin,vec2(0.5,uv.y)).rgb;
+  // The lid atlas has black holes. Filtered hole edges must also use valid skin.
+  if (lid.r<0.90) lid=texture2D(eyeSkin,vec2(0.5,uv.y)).rgb;
   return mix(color,lid,skin);
 }
 `);

@@ -1,0 +1,251 @@
+{
+  "shaderBefore": "bedcfe3a",
+  "shaderAfter": "43094b84",
+  "renderStates": {
+    "open": {
+      "changedPixels": 1272,
+      "differenceBounds": [
+        119,
+        320,
+        881,
+        500
+      ],
+      "redIrisAndLashSamplePixels": 29618,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 22626,
+      "neutralSamplesChanged": 0
+    },
+    "quarter": {
+      "changedPixels": 917,
+      "differenceBounds": [
+        121,
+        396,
+        879,
+        499
+      ],
+      "redIrisAndLashSamplePixels": 28341,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 19389,
+      "neutralSamplesChanged": 0
+    },
+    "half": {
+      "changedPixels": 607,
+      "differenceBounds": [
+        132,
+        422,
+        868,
+        494
+      ],
+      "redIrisAndLashSamplePixels": 19166,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 9849,
+      "neutralSamplesChanged": 0
+    },
+    "almost": {
+      "changedPixels": 51,
+      "differenceBounds": [
+        344,
+        465,
+        656,
+        475
+      ],
+      "redIrisAndLashSamplePixels": 8259,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 681,
+      "neutralSamplesChanged": 0
+    },
+    "closed": {
+      "changedPixels": 0,
+      "differenceBounds": null,
+      "redIrisAndLashSamplePixels": 7462,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 106,
+      "neutralSamplesChanged": 0
+    },
+    "winkLeft": {
+      "changedPixels": 537,
+      "differenceBounds": [
+        119,
+        396,
+        392,
+        500
+      ],
+      "redIrisAndLashSamplePixels": 19181,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 9796,
+      "neutralSamplesChanged": 0
+    },
+    "winkRight": {
+      "changedPixels": 735,
+      "differenceBounds": [
+        601,
+        320,
+        881,
+        500
+      ],
+      "redIrisAndLashSamplePixels": 17899,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 12936,
+      "neutralSamplesChanged": 0
+    },
+    "left": {
+      "changedPixels": 1086,
+      "differenceBounds": [
+        72,
+        319,
+        619,
+        508
+      ],
+      "redIrisAndLashSamplePixels": 23751,
+      "redIrisAndLashSamplesChanged": 1,
+      "neutralScleraAndReflectionSamplePixels": 14473,
+      "neutralSamplesChanged": 0
+    },
+    "right": {
+      "changedPixels": 1040,
+      "differenceBounds": [
+        381,
+        322,
+        933,
+        508
+      ],
+      "redIrisAndLashSamplePixels": 25416,
+      "redIrisAndLashSamplesChanged": 2,
+      "neutralScleraAndReflectionSamplePixels": 12857,
+      "neutralSamplesChanged": 0
+    },
+    "halfLeft": {
+      "changedPixels": 334,
+      "differenceBounds": [
+        72,
+        428,
+        595,
+        505
+      ],
+      "redIrisAndLashSamplePixels": 21245,
+      "redIrisAndLashSamplesChanged": 1,
+      "neutralScleraAndReflectionSamplePixels": 6331,
+      "neutralSamplesChanged": 0
+    },
+    "halfRight": {
+      "changedPixels": 342,
+      "differenceBounds": [
+        405,
+        428,
+        928,
+        505
+      ],
+      "redIrisAndLashSamplePixels": 22501,
+      "redIrisAndLashSamplesChanged": 1,
+      "neutralScleraAndReflectionSamplePixels": 6718,
+      "neutralSamplesChanged": 0
+    },
+    "gazeLeft": {
+      "changedPixels": 1009,
+      "differenceBounds": [
+        125,
+        391,
+        874,
+        499
+      ],
+      "redIrisAndLashSamplePixels": 28528,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 21629,
+      "neutralSamplesChanged": 0
+    },
+    "gazeRight": {
+      "changedPixels": 1180,
+      "differenceBounds": [
+        126,
+        318,
+        875,
+        499
+      ],
+      "redIrisAndLashSamplePixels": 28505,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 21325,
+      "neutralSamplesChanged": 0
+    },
+    "gazeUp": {
+      "changedPixels": 1381,
+      "differenceBounds": [
+        119,
+        323,
+        881,
+        484
+      ],
+      "redIrisAndLashSamplePixels": 30524,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 20545,
+      "neutralSamplesChanged": 0
+    },
+    "gazeDown": {
+      "changedPixels": 723,
+      "differenceBounds": [
+        119,
+        333,
+        881,
+        505
+      ],
+      "redIrisAndLashSamplePixels": 26392,
+      "redIrisAndLashSamplesChanged": 1,
+      "neutralScleraAndReflectionSamplePixels": 20892,
+      "neutralSamplesChanged": 0
+    },
+    "halfGaze": {
+      "changedPixels": 438,
+      "differenceBounds": [
+        132,
+        413,
+        866,
+        494
+      ],
+      "redIrisAndLashSamplePixels": 21074,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 10336,
+      "neutralSamplesChanged": 0
+    },
+    "closedLeft": {
+      "changedPixels": 0,
+      "differenceBounds": null,
+      "redIrisAndLashSamplePixels": 11265,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 1544,
+      "neutralSamplesChanged": 0
+    },
+    "closedRight": {
+      "changedPixels": 0,
+      "differenceBounds": null,
+      "redIrisAndLashSamplePixels": 12474,
+      "redIrisAndLashSamplesChanged": 0,
+      "neutralScleraAndReflectionSamplePixels": 1535,
+      "neutralSamplesChanged": 0
+    }
+  },
+  "openOutsideEyeBandChangedPixels": 0,
+  "closedFramesChangedPixels": [
+    0,
+    0,
+    0
+  ],
+  "originalGeometryAndUVKept": true,
+  "nativeVRMSHA256": "5167e2f97b107dfdc8dda2b7e9add24a9392c506f39be0411a6c1a3e7fa5aab0",
+  "referenceSHA256": "35b73e9d082e84ea123b0315540641a1a6ad368d799de5232454c64203aa4882",
+  "tests": {
+    "pass": 22,
+    "fail": 0
+  },
+  "build": "success",
+  "localBrowserShaderErrors": [],
+  "scope": "Actual WebGL Avatar renderer with controlled expression/gaze inputs and hair frozen for repeatability; not real webcam or device acceptance",
+  "remainingUnrelatedIssue": "Previously recorded public hair update initialization errors during model load; not altered by this local eye patch",
+  "wholeFaceOpenDifference": {
+    "changedPixels": 350,
+    "bounds": [
+      313,
+      396,
+      687,
+      483
+    ]
+  }
+}
